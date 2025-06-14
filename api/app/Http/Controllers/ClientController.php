@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Events\ClientCreated;
+use App\Events\ClientDeleted;
 use App\Events\ClientUpdated;
 use App\Events\CreatingClient;
+use App\Events\DeletingClient;
 use App\Events\UpdatingClient;
 use App\Http\Requests\CreateClientRequest;
 use App\Http\Requests\DeleteClientRequest;
@@ -60,7 +62,9 @@ class ClientController extends Controller implements HasMiddleware
     public function destroy(DeleteClientRequest $request, Client $client): Response
     {
         return DB::transaction(function () use ($request, $client) {
+            event(new DeletingClient($client));
             $client->delete();
+            event(new ClientDeleted($client));
 
             return response(status: Response::HTTP_NO_CONTENT);
         });
