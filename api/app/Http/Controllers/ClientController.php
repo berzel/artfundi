@@ -13,6 +13,7 @@ use App\Http\Requests\DeleteClientRequest;
 use App\Http\Requests\EditClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,17 @@ class ClientController extends Controller implements HasMiddleware
             'auth:sanctum',
             'role:admin',
         ];
+    }
+
+    public function index()
+    {
+        $clients = Client::query();
+
+        $clients->orderBy('created_at', 'desc');
+
+        $clients = $clients->paginate();
+
+        return ClientResource::collection($clients);
     }
 
     /**
