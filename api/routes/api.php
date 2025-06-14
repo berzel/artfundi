@@ -1,13 +1,12 @@
 <?php
 
-use App\Http\Controllers\CreateClientController;
-use App\Http\Controllers\EditClientController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::put('/clients/{client}', [EditClientController::class, 'update']);
-    Route::post('/clients', [CreateClientController::class, 'store']);
+    Route::delete('/clients/{client}', [ClientController::class, 'destroy']);
+    Route::put('/clients/{client}', [ClientController::class, 'update']);
+    Route::post('/clients', [ClientController::class, 'store']);
 
     Route::get('/user', fn() => auth()->user()->only(['email']));
 });

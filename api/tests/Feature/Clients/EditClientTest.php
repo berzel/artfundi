@@ -25,10 +25,10 @@ class EditClientTest extends TestCase
     {
         $user = $this->user();
         $admin = Role::create(['name' => 'admin']);
-        $createClient = Permission::create(['name' => 'update-clients']);
+        $updateClients = Permission::create(['name' => 'update-clients']);
 
         $user->addRole($admin);
-        $admin->givePermission($createClient);
+        $admin->givePermission($updateClients);
 
         return $user;
     }
