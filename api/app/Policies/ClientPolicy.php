@@ -13,7 +13,15 @@ class ClientPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('admin') || $user->hasPermission('list-clients');
+    }
+
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function list(User $user): bool
+    {
+        return $this->viewAny($user);
     }
 
     /**

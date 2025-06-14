@@ -9,11 +9,9 @@ use App\Events\CreatingClient;
 use App\Events\DeletingClient;
 use App\Events\UpdatingClient;
 use App\Http\Requests\CreateClientRequest;
-use App\Http\Requests\DeleteClientRequest;
 use App\Http\Requests\EditClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +29,10 @@ class ClientController extends Controller implements HasMiddleware
 
     public function index()
     {
+        if (auth()->user()->cannot('list', Client::class)) {
+            abort(403);
+        }
+
         $clients = Client::query();
 
         $clients->orderBy('created_at', 'desc');
@@ -71,16 +73,18 @@ class ClientController extends Controller implements HasMiddleware
     /**
      * @throws Throwable
      */
-    public function destroy(DeleteClientRequest $request, Client $client): Response
+    public function destroy(Client $client): Response
     {
-        return DB::transaction(function () use ($request, $client) {
+        if (auth()->user()->cannot('delete', $client)) {
+            abort(403);
+        }
+
+        return DB::transaction(function () use ($client) {
             event(new DeletingClient($client));
             $client->delete();
             event(new ClientDeleted($client));
 
             return response(status: Response::HTTP_NO_CONTENT);
         });
-
-
     }
 }

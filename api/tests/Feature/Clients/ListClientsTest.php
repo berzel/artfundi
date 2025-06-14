@@ -24,12 +24,26 @@ class ListClientsTest extends TestCase
     {
         $user = $this->user();
         $admin = Role::create(['name' => 'admin']);
-        $updateClients = Permission::create(['name' => 'update-clients']);
+        $listClients = Permission::create(['name' => 'list-clients']);
 
         $user->addRole($admin);
-        $admin->givePermission($updateClients);
+        $admin->givePermission($listClients);
 
         return $user;
+    }
+
+    public function test_guest_user_cannot_view_clients_list(): void
+    {
+        $response = $this->getJson('/api/clients');
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_user_without_permission_cannot_view_clients_list(): void
+    {
+        $response = $this->actingAs($this->user())->getJson('/api/clients');
+
+        $response->assertForbidden();
     }
 
     public function test_admin_can_view_clients_list(): void
@@ -41,7 +55,9 @@ class ListClientsTest extends TestCase
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'first_name', 'last_name', 'email', 'phone']
+                    '*' => [
+                        'id', 'first_name', 'last_name', 'email', 'phone'
+                    ]
                 ],
                 'links',
                 'meta',
