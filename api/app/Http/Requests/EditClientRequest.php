@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Client;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CreateClientRequest extends FormRequest
+class EditClientRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->can('create', Client::class);
+        return auth()->check() && auth()->user()->can('update', $this->route()->parameter('client'));
     }
 
     /**
@@ -26,7 +26,9 @@ class CreateClientRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:clients'],
+            'email' => ['required', 'string', 'email', 'max:255',
+                Rule::unique('clients')->ignore($this->route()->parameter('client'))
+            ],
             'phone' => ['required', 'string', 'max:255', 'unique:clients'],
         ];
     }

@@ -13,7 +13,8 @@ use Tests\TestCase;
 
 class CreateClientTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase;
+    use WithFaker;
 
     protected function user(): User
     {
@@ -24,7 +25,7 @@ class CreateClientTest extends TestCase
     {
         $user = $this->user();
         $admin = Role::create(['name' => 'admin']);
-        $createClient = Permission::create(['name' => 'create-client']);
+        $createClient = Permission::create(['name' => 'create-clients']);
 
         $user->addRole($admin);
         $admin->givePermission($createClient);
@@ -38,7 +39,7 @@ class CreateClientTest extends TestCase
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
-            'phone' => '+27' . $this->faker->unique()->numerify('##########'),
+            'phone' => $this->faker->unique()->e164PhoneNumber(),
         ];
     }
 
