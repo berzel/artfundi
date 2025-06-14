@@ -12,6 +12,7 @@ use App\Http\Requests\CreateClientRequest;
 use App\Http\Requests\EditClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\DB;
@@ -27,15 +28,38 @@ class ClientController extends Controller implements HasMiddleware
         ];
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        if (auth()->user()->cannot('list', Client::class)) {
+        if ($request->user()->cannot('list', Client::class)) {
             abort(403);
         }
 
         $clients = Client::query();
 
-        $clients->orderBy('created_at', 'desc');
+        if ($request->filled('first_name')) {
+            $input = $request->input('first_name');
+            $clients->where('first_name', 'like', '%' . $input . '%');
+        }
+
+        if ($request->filled('last_name')) {
+            $input = $request->input('last_name');
+            $clients->where('last_name', 'like', '%' . $input . '%');
+        }
+
+        if ($request->filled('email')) {
+            $input = $request->input('email');
+            $clients->where('email', 'like', '%' . $input . '%');
+        }
+
+        if ($request->filled('phone')) {
+            $input = $request->input('phone');
+            $clients->where('phone', 'like', '%' . $input . '%');
+        }
+
+        $sort_by = $request->input('order_by', 'created_at');
+        $sort_dir = $request->input('order', 'desc');
+
+        $clients->orderBy($sort_by, $sort_dir);
 
         $clients = $clients->paginate();
 

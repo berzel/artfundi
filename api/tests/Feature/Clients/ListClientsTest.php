@@ -68,4 +68,64 @@ class ListClientsTest extends TestCase
             collect($response->json('data'))->pluck('id')->toArray()
         );
     }
+
+    public function test_it_filters_users_by_first_name()
+    {
+        Client::factory()->create(['first_name' => 'John']);
+        Client::factory()->create(['first_name' => 'Jane']);
+        Client::factory()->create(['first_name' => 'Jack']);
+
+        $response = $this->actingAs($this->adminUser())->getJson('/api/clients?first_name=John');
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['first_name' => 'John'])
+            ->assertJsonMissing(['first_name' => 'Jane'])
+            ->assertJsonMissing(['first_name' => 'Jack']);
+    }
+
+    public function test_it_filters_users_by_last_name()
+    {
+        Client::factory()->create(['last_name' => 'Doe']);
+        Client::factory()->create(['last_name' => 'Smith']);
+        Client::factory()->create(['last_name' => 'Johnson']);
+
+        $response = $this->actingAs($this->adminUser())->getJson('/api/clients?last_name=Doe');
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['last_name' => 'Doe'])
+            ->assertJsonMissing(['last_name' => 'Smith'])
+            ->assertJsonMissing(['last_name' => 'Johnson']);
+    }
+
+    public function test_it_filters_users_by_email()
+    {
+        Client::factory()->create(['email' => 'john@example.com']);
+        Client::factory()->create(['email' => 'jane@example.com']);
+        Client::factory()->create(['email' => 'jack@example.com']);
+
+        $response = $this->actingAs($this->adminUser())->getJson('/api/clients?email=john@example.com');
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['email' => 'john@example.com'])
+            ->assertJsonMissing(['email' => 'jane@example.com'])
+            ->assertJsonMissing(['email' => 'jack@example.com']);
+    }
+
+    public function test_it_filters_users_by_phone()
+    {
+        Client::factory()->create(['phone' => '+15551234567']);
+        Client::factory()->create(['phone' => '+15559876543']);
+        Client::factory()->create(['phone' => '+15557654321']);
+
+        $response = $this->actingAs($this->adminUser())->getJson('/api/clients?phone=%2B15551234567');
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['phone' => '+15551234567'])
+            ->assertJsonMissing(['phone' => '+15559876543'])
+            ->assertJsonMissing(['phone' => '+15557654321']);
+    }
 }
