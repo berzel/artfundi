@@ -29,7 +29,7 @@ class ClientPolicy
      */
     public function view(User $user, Client $client): bool
     {
-        return false;
+        return $user->hasRole('admin') || $user->hasPermission('view-client');
     }
 
     /**

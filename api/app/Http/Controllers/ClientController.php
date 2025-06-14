@@ -20,7 +20,7 @@ use Throwable;
 
 class ClientController extends Controller implements HasMiddleware
 {
-    public static function middleware()
+    public static function middleware(): array
     {
         return [
             'auth:sanctum',
@@ -34,36 +34,22 @@ class ClientController extends Controller implements HasMiddleware
             abort(403);
         }
 
-        $clients = Client::query();
+        $filters = $request->only(['first_name', 'last_name', 'email', 'phone']);
 
-        if ($request->filled('first_name')) {
-            $input = $request->input('first_name');
-            $clients->where('first_name', 'like', '%' . $input . '%');
-        }
-
-        if ($request->filled('last_name')) {
-            $input = $request->input('last_name');
-            $clients->where('last_name', 'like', '%' . $input . '%');
-        }
-
-        if ($request->filled('email')) {
-            $input = $request->input('email');
-            $clients->where('email', 'like', '%' . $input . '%');
-        }
-
-        if ($request->filled('phone')) {
-            $input = $request->input('phone');
-            $clients->where('phone', 'like', '%' . $input . '%');
-        }
-
-        $sort_by = $request->input('order_by', 'created_at');
-        $sort_dir = $request->input('order', 'desc');
-
-        $clients->orderBy($sort_by, $sort_dir);
+        $clients = Client::filter($filters)->sort($request);
 
         $clients = $clients->paginate();
 
         return ClientResource::collection($clients);
+    }
+
+    public function show(Client $client)
+    {
+        if (auth()->user()->cannot('view', $client)) {
+            abort(403);
+        }
+
+        return new ClientResource($client);
     }
 
     /**
@@ -76,7 +62,7 @@ class ClientController extends Controller implements HasMiddleware
             $client = Client::create($request->validated());
             event(new ClientCreated($client));
 
-            return new ClientResource($client);
+            return response(new ClientResource($client), Response::HTTP_CREATED);
         });
     }
 
@@ -90,7 +76,7 @@ class ClientController extends Controller implements HasMiddleware
             $client->update($request->validated());
             event(new ClientUpdated($client));
 
-            return new ClientResource($client);
+            return response(new ClientResource($client), Response::HTTP_OK);
         });
     }
 
