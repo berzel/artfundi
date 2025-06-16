@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,11 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@test.com',
         ]);
+
+        $admin = Role::create(['name' => 'admin']);
+        $createClient = Permission::create(['name' => 'create-clients']);
+
+        $user->addRole($admin);
+        $admin->givePermission($createClient);
     }
 }

@@ -29,7 +29,9 @@ class EditClientRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255',
                 Rule::unique('clients')->ignore($this->route()->parameter('client'))
             ],
-            'phone' => ['required', 'string', 'max:255', 'unique:clients'],
+            'phone' => ['required', 'string', 'max:255',
+                Rule::unique('clients')->ignore($this->route()->parameter('client'))
+            ],
         ];
     }
 }
