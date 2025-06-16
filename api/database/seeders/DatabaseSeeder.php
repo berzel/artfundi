@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -25,5 +26,7 @@ class DatabaseSeeder extends Seeder
 
         $user->addRole($admin);
         $admin->givePermission($createClient);
+
+        Client::factory()->count(20)->create();
     }
 }
