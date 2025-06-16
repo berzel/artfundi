@@ -7,6 +7,8 @@
 
 ## Setup
 
+Run the following commands in your terminal
+
 ```bash
 git clone git@github.com:berzel/artfundi.git
 cd artfundi
@@ -16,7 +18,7 @@ composer install
 ./vendor/bin/sail up -d
 ./vendor/bin/sail artisan migrate:fresh --seed
 cd ../frontend
-yarn
+yarn install
 yarn run dev
 ```
 
