@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import api from "../lib/axios.ts"
 import ClientForm from './ClientForm.vue'
-import type {ClientFormData} from "../lib/types.ts";
+import type { ClientFormData } from "../lib/types.ts"
 
 const emit = defineEmits<{
   (e: 'cancel'): void
 }>()
+
+const router = useRouter()
 
 const defaultFormValues: ClientFormData = {
   first_name: '',
@@ -23,10 +26,10 @@ const handleCancel = () => {
 
 const handleSubmit = async () => {
   try {
-    await api.post('/api/clients', form.value)
+    const response = await api.post('/api/clients', form.value)
+    const createdClient = response.data
     alert('Client created successfully.')
-    form.value = { ...defaultFormValues }
-    handleCancel()
+    await router.push(`/clients/${createdClient.id}`)
   } catch (error) {
     console.error('Failed to create client:', error)
     alert('An error occurred while creating the client.')

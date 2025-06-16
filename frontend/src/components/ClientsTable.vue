@@ -7,6 +7,7 @@ import BaseModal from "./BaseModal.vue";
 import EditClientForm from "./EditClientForm.vue";
 import DeleteClientForm from "./DeleteClientForm.vue";
 import type {Client} from "../lib/types.ts";
+import {useModal} from "../lib/useModal.ts";
 
 const columns = ['ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Actions'];
 const clients = ref<Client[]>([]);
@@ -21,23 +22,6 @@ const fetchClients = async () => {
 };
 
 onMounted(fetchClients);
-
-function useModal<T>() {
-  const show = ref(false);
-  const selected = ref<T | null>(null);
-
-  const open = (item: T) => {
-    selected.value = { ...item };
-    show.value = true;
-  };
-
-  const close = () => {
-    show.value = false;
-    selected.value = null;
-  };
-
-  return { show, selected, open, close };
-}
 
 // Edit modal state and logic
 const {

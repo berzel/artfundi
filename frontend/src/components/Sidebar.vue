@@ -21,16 +21,16 @@
     </div>
     <ul class="nav flex-column">
       <li class="nav-item  mb-2">
-        <router-link to="/" class="nav-link active text-white">Dashboard</router-link>
+        <a href="#" class="nav-link active text-white">Dashboard</a>
       </li>
       <li class="nav-item mb-2">
-        <router-link to="/clients" class="nav-link text-white">Clients</router-link>
+        <a href="#" class="nav-link text-white">Clients</a>
       </li>
       <li class="nav-item mb-2">
-        <router-link to="/inventory" class="nav-link text-white">Inventory</router-link>
+        <a href="#" class="nav-link text-white">Inventory</a>
       </li>
       <li class="nav-item mb-2">
-        <router-link to="/sales" class="nav-link text-white">Sales</router-link>
+        <a href="#" class="nav-link text-white">Sales</a>
       </li>
     </ul>
   </div>
