@@ -1,20 +1,16 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
-  import axios from 'axios'
   import LoginPage from "./pages/LoginPage.vue"
   import HomePage from "./pages/HomePage.vue"
   import LoadingSpinner from "./components/LoadingSpinner.vue";
-
-  axios.defaults.baseURL = 'http://localhost'
-  axios.defaults.withCredentials = true
-  axios.defaults.withXSRFToken = true
+  import api from "./lib/axios.ts";
 
   const user = ref()
   const loading = ref(true)
 
   const getAuthenticatedUser = async () => {
     try {
-      const response = await axios.get('/api/user')
+      const response = await api.get('/api/user')
       user.value = response.data
     } catch {
       user.value = null
@@ -22,7 +18,7 @@
   }
 
   onMounted(async () => {
-    await axios.get('/sanctum/csrf-cookie')
+    await api.get('/sanctum/csrf-cookie')
     await getAuthenticatedUser()
     loading.value = false
   })

@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue'
-import axios from 'axios'
-
-axios.defaults.baseURL = 'http://localhost'
-axios.defaults.withCredentials = true
-axios.defaults.withXSRFToken = true
+import api from "../lib/axios.ts";
 
 const emit = defineEmits<{
   (e: 'logged-in'): void
@@ -13,11 +9,9 @@ const emit = defineEmits<{
 const email = ref('')
 const password = ref('')
 
-const handleSubmit = async (event: Event) => {
-  event.preventDefault();
-
+const handleSubmit = async () => {
   try {
-    await axios.post('/api/login', {
+    await api.post('/api/login', {
       email: email.value,
       password: password.value,
     })
@@ -34,7 +28,7 @@ const handleSubmit = async (event: Event) => {
     <div class="login-container text-center">
       <h2 class="mb-4">Login</h2>
 
-      <form @submit="handleSubmit">
+      <form @submit.prevent="handleSubmit">
         <div class="mb-3 text-start">
           <label for="email" class="form-label">Email address</label>
           <input

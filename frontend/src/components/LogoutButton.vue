@@ -1,18 +1,14 @@
 <script setup lang="ts">
-  import axios from "axios";
-
-  axios.defaults.baseURL = 'http://localhost'
-  axios.defaults.withCredentials = true
-  axios.defaults.withXSRFToken = true
+  import api from "../lib/axios.ts";
 
   const logout = async () => {
     try {
-      await axios.post('/api/logout')
+      await api.post('/api/logout')
       window.location.reload()
     } catch (error) {
       console.error('Logout failed:', error)
     }
-}
+  }
 </script>
 
 <template>
