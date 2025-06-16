@@ -1,1 +1,22 @@
 
+/* Add to App.vue or a global CSS */
+.card-title {
+    font-weight: 500;
+    color: #333;
+}
+
+.nav-link.active {
+    color: #FFD700 !important; /* muted gold for active link */
+}
+
+
+.logo {
+    color: #BA5C33;
+}
+
+/* Responsive tweak for smaller screens if you want it collapsible later */
+@media screen and (min-width: 768px) {
+    .main-content {
+        margin-left: 240px;
+    }
+}

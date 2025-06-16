@@ -1,36 +1,29 @@
 <script setup lang="ts">
-  import LogoutButton from '../components/LogoutButton.vue'
   import AddClientModal from '../components/AddClientModal.vue'
-  import { defineProps } from 'vue'
-  import ClientsTable from "../components/ClientsTable.vue";
+  import {defineProps} from 'vue'
   import type {User} from "../lib/types.ts";
+  import Layout from "../components/Layout.vue";
+  import DashboardWidgets from "../components/DashboardWidgets.vue";
 
   interface Props {
     user: User
   }
 
-  const props = defineProps<Props>()
+  defineProps<Props>()
 </script>
 
 <template>
-  <div class="container mt-4">
-    <header class="d-flex justify-content-between align-items-center">
-      <h1>Welcome back, {{ props.user.name }}</h1>
-      <LogoutButton />
-    </header>
+  <Layout user="">
+    <h2 class="mb-4">Welcome back, {{ user.name }}</h2>
 
-    <section class="mt-4">
-      <AddClientModal />
-    </section>
+    <DashboardWidgets />
 
-    <section class="mt-4">
-      <ClientsTable />
+    <section class="mt-5">
+      <div class="d-flex justify-content-between mb-2">
+        <h4>Recent Clients</h4>
+        <AddClientModal />
+      </div>
+      <!--          <ClientsTable />-->
     </section>
-  </div>
+  </Layout>
 </template>
-
-<style scoped>
-  .container {
-    padding: 1rem;
-  }
-</style>
