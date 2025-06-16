@@ -10,7 +10,7 @@ defineProps<{
     <table class="table table-striped">
       <thead>
       <tr>
-        <th v-for="(col, index) in columns" :key="index" scope="col">
+        <th v-for="(col, index) in columns" :key="index" scope="col" class="text-nowrap">
           {{ col }}
         </th>
       </tr>

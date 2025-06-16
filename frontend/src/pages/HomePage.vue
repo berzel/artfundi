@@ -4,6 +4,7 @@
   import type {User} from "../lib/types.ts";
   import Layout from "../components/Layout.vue";
   import DashboardWidgets from "../components/DashboardWidgets.vue";
+  import ClientsTable from "../components/ClientsTable.vue";
 
   interface Props {
     user: User
@@ -13,7 +14,7 @@
 </script>
 
 <template>
-  <Layout user="">
+  <Layout>
     <h2 class="mb-4">Welcome back, {{ user.name }}</h2>
 
     <DashboardWidgets />
@@ -23,7 +24,7 @@
         <h4>Recent Clients</h4>
         <AddClientModal />
       </div>
-      <!--          <ClientsTable />-->
+      <ClientsTable />
     </section>
   </Layout>
 </template>

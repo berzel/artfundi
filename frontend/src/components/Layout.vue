@@ -7,10 +7,10 @@ const sidebarOpen = ref(false)
 </script>
 
 <template>
-  <div class="d-flex">
+  <div>
     <Sidebar @close="sidebarOpen = false" :open="sidebarOpen" />
 
-    <div class="flex-grow-1 bg-light min-vh-100 main-content">
+    <div class="bg-light min-vh-100 main-content">
       <Header @open="sidebarOpen = true" />
 
       <div class="container-fluid p-4">
