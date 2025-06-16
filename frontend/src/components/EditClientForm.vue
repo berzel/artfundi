@@ -1,25 +1,30 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import ClientForm from './ClientForm.vue'
+import { ref, watch } from 'vue'
+import ClientForm from './ClientForm.vue'
+import type {Client, ClientFormData} from "../lib/types.ts";
 
-  const props = defineProps<{
-    client: Record<string, any>
-  }>()
+const props = defineProps<{
+  client: Client
+}>()
 
-  const emit = defineEmits<{
-    (e: 'submit', updatedClient: Record<string, any>): void
-    (e: 'cancel'): void
-  }>()
+const emit = defineEmits<{
+  (e: 'submit', updatedClient: Client): void
+  (e: 'cancel'): void
+}>()
 
-  const form = ref({ ...props.client })
+const form = ref<ClientFormData>({ ...props.client })
 
-  function handleSubmit() {
-    emit('submit', form.value)
-  }
+watch(() => props.client, (newClient) => {
+  form.value = { ...newClient }
+})
 
-  function handleCancel() {
-    emit('cancel')
-  }
+const handleSubmit = () => {
+  emit('submit', form.value)
+}
+
+const handleCancel = () => {
+  emit('cancel')
+}
 </script>
 
 <template>

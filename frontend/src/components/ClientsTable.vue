@@ -1,82 +1,92 @@
 <script setup lang="ts">
-import BaseTable from './BaseTable.vue';
-import api from "../lib/axios.ts";
 import { ref, onMounted } from "vue";
+import api from "../lib/axios.ts";
+
+import BaseTable from './BaseTable.vue';
 import BaseModal from "./BaseModal.vue";
 import EditClientForm from "./EditClientForm.vue";
 import DeleteClientForm from "./DeleteClientForm.vue";
+import type {Client} from "../lib/types.ts";
 
 const columns = ['ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Actions'];
-const clients = ref<Array<Record<string, any>>>([]);
+const clients = ref<Client[]>([]);
 
-async function fetchClients() {
+const fetchClients = async () => {
   try {
-    const response = await api.get('/api/clients');
-    clients.value = response.data.data;
+    const { data } = await api.get('/api/clients');
+    clients.value = data.data;
   } catch (error) {
     console.error('Failed to fetch clients:', error);
   }
-}
+};
 
 onMounted(fetchClients);
 
-// Edit Modal Controls
-const showEditModal = ref(false);
-const selectedEditClient = ref<Record<string, any> | null>(null);
+function useModal<T>() {
+  const show = ref(false);
+  const selected = ref<T | null>(null);
 
-const handleEditModalOpen = (client: any) => {
-  selectedEditClient.value = { ...client };
-  showEditModal.value = true;
-};
+  const open = (item: T) => {
+    selected.value = { ...item };
+    show.value = true;
+  };
 
-const handleEditModalClose = () => {
-  showEditModal.value = false;
-  selectedEditClient.value = null;
-};
+  const close = () => {
+    show.value = false;
+    selected.value = null;
+  };
 
-const handleEditFormSubmit = async (updatedClient: Record<string, any>) => {
-  const response = await api.put(`/api/clients/${updatedClient.id}`, {...updatedClient});
-  const index = clients.value.findIndex(c => c.id === updatedClient.id);
-  if (index !== -1) {
-    clients.value[index] = response.data;
+  return { show, selected, open, close };
+}
+
+// Edit modal state and logic
+const {
+  show: showEditModal,
+  selected: selectedEditClient,
+  open: handleEditModalOpen,
+  close: handleEditModalClose
+} = useModal<Client>();
+
+const handleEditFormSubmit = async (updatedClient: Client) => {
+  try {
+    const { data } = await api.put(`/api/clients/${updatedClient.id}`, updatedClient);
+    const index = clients.value.findIndex(c => c.id === updatedClient.id);
+    if (index !== -1) {
+      clients.value[index] = data;
+    }
+    handleEditModalClose();
+  } catch (error) {
+    console.error('Edit failed:', error);
   }
-  handleEditModalClose();
 };
 
-// Delete Modal Controls
-const showDeleteModal = ref(false);
-const selectedDeleteClient = ref<Record<string, any> | null>(null);
+// Delete modal state and logic
+const {
+  show: showDeleteModal,
+  selected: selectedDeleteClient,
+  open: handleDeleteModalOpen,
+  close: handleDeleteModalClose
+} = useModal<Client>();
 
-const handleDeleteModalOpen = (client: any) => {
-  selectedDeleteClient.value = { ...client };
-  showDeleteModal.value = true;
-};
-
-const handleDeleteModalClose = () => {
-  showDeleteModal.value = false;
-  selectedDeleteClient.value = null;
-};
-
-const handleDeleteFormSubmit = async (updatedClient: Record<string, any>) => {
-  await api.delete(`/api/clients/${updatedClient.id}`);
-  const index = clients.value.findIndex(c => c.id === updatedClient.id);
-  if (index !== -1) {
-    clients.value = clients.value.filter(c => c.id !== updatedClient.id);
+const handleDeleteFormSubmit = async (clientToDelete: Client) => {
+  try {
+    await api.delete(`/api/clients/${clientToDelete.id}`);
+    clients.value = clients.value.filter(c => c.id !== clientToDelete.id);
+    handleDeleteModalClose();
+  } catch (error) {
+    console.error('Delete failed:', error);
   }
-  handleDeleteModalClose();
 };
-
 </script>
 
 <template>
   <BaseTable :columns="columns" :rows="clients">
-    <template #row="{row}">
+    <template #row="{ row }">
       <td>{{ row.id }}</td>
       <td>{{ row.first_name }}</td>
       <td>{{ row.last_name }}</td>
       <td>{{ row.email }}</td>
       <td>{{ row.phone }}</td>
-
       <td>
         <button @click="handleEditModalOpen(row)">Edit</button>
         <button @click="handleDeleteModalOpen(row)">Delete</button>
