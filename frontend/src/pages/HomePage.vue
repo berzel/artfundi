@@ -7,15 +7,15 @@
   import ClientsTable from "../components/ClientsTable.vue";
 
   interface Props {
-    user: User
+    user: User|null
   }
 
   defineProps<Props>()
 </script>
 
 <template>
-  <Layout>
-    <h2 class="mb-4">Welcome back, {{ user.name }}</h2>
+  <Layout v-if="user !== null">
+    <h2 class="mb-4">Welcome back, {{ user?.name }}</h2>
 
     <DashboardWidgets />
 
