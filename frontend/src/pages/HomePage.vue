@@ -3,11 +3,7 @@
   import AddClientModal from '../components/AddClientModal.vue'
   import { defineProps } from 'vue'
   import ClientsTable from "../components/ClientsTable.vue";
-
-  interface User {
-    name: string
-    email: string
-  }
+  import type {User} from "../lib/types.ts";
 
   interface Props {
     user: User

@@ -1,3 +1,8 @@
+export interface User {
+    name: string
+    email: string
+}
+
 export interface Client {
     id: number
     first_name: string
